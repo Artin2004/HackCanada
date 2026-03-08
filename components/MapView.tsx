@@ -73,6 +73,15 @@ export function MapView({
 
       mapRef.current = map;
 
+      // Force Leaflet to recalculate tile coverage once the flex container
+      // resolves its final height (which may not have happened at init time).
+      const ro = new ResizeObserver(() => {
+        map.invalidateSize();
+      });
+      if (containerRef.current) ro.observe(containerRef.current);
+      setTimeout(() => map.invalidateSize(), 50);
+      setTimeout(() => map.invalidateSize(), 200);
+
       if (label && center) {
         L.default.marker([center[1], center[0]]).addTo(map).bindTooltip(label);
       }
@@ -152,8 +161,7 @@ export function MapView({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full bg-slate-800"
-      style={{ minHeight: 300 }}
+      className="absolute inset-0 bg-slate-800"
     />
   );
 }

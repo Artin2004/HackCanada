@@ -210,7 +210,7 @@ export default function TriageDashboard() {
         </aside>
 
         {/* Right: map */}
-        <main className="flex-1 relative">
+        <main className="flex-1 relative overflow-hidden">
           <MapView
             hotspots={enriched}
             selectedId={selectedId}
@@ -228,7 +228,7 @@ export default function TriageDashboard() {
           />
 
           {/* Map legend */}
-          <div className="absolute bottom-4 right-4 bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-3 text-xs space-y-1.5 pointer-events-none">
+          <div className="absolute bottom-4 right-4 z-[1000] bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-3 text-xs space-y-1.5 pointer-events-none">
             <p className="text-slate-400 font-medium mb-2">Risk Level</p>
             {(["HIGH", "MEDIUM", "LOW", "Pending"] as const).map((label) => {
               const color =
