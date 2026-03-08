@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { HotspotCard } from "@/components/HotspotCard";
 import { HotspotModal } from "@/components/HotspotModal";
+import { SatelliteTooltip } from "@/components/SatellitePreview";
 import type { Hotspot } from "@/lib/data/nasa-firms";
 import type { TriageResult } from "@/lib/tools/triage";
 import type { WeatherData } from "@/lib/data/open-meteo";
@@ -34,6 +35,7 @@ export default function TriageDashboard() {
   const [analyzingIds, setAnalyzingIds] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [loadingHotspots, setLoadingHotspots] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -116,6 +118,7 @@ export default function TriageDashboard() {
   const analyzedCount = analyses.size;
   const highCount = [...analyses.values()].filter((a) => a.risk_level === "HIGH").length;
   const anyAnalyzing = analyzingIds.size > 0;
+  const hoveredHotspot = hoveredId ? enriched.find((h) => h.id === hoveredId) ?? null : null;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
@@ -213,8 +216,14 @@ export default function TriageDashboard() {
             selectedId={selectedId}
             hoveredId={hoveredId}
             onSelect={(h) => setSelectedId(h.id === selectedId ? null : h.id)}
-            onHover={(h) => setHoveredId(h.id)}
-            onHoverEnd={() => setHoveredId(null)}
+            onHover={(h, screenX, screenY) => {
+              setHoveredId(h.id);
+              setHoverPos({ x: screenX, y: screenY });
+            }}
+            onHoverEnd={() => {
+              setHoveredId(null);
+              setHoverPos(null);
+            }}
             zoom={4}
           />
 
@@ -248,6 +257,19 @@ export default function TriageDashboard() {
           analysis={selectedAnalysis}
           weather={selectedWeather}
           onClose={() => setSelectedId(null)}
+        />
+      )}
+
+      {/* Satellite hover tooltip — rendered above everything, below modal */}
+      {hoveredHotspot && hoverPos && !selected && (
+        <SatelliteTooltip
+          lat={hoveredHotspot.lat}
+          lon={hoveredHotspot.lon}
+          imageUrl={hoveredHotspot.analysis?.image_url ?? null}
+          riskLevel={hoveredHotspot.analysis?.risk_level}
+          frp={hoveredHotspot.frp}
+          screenX={hoverPos.x}
+          screenY={hoverPos.y}
         />
       )}
     </div>

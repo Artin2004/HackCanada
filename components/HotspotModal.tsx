@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { RiskBadge } from "./RiskBadge";
+import { SatellitePreview } from "./SatellitePreview";
 import type { Hotspot } from "@/lib/data/nasa-firms";
 import type { TriageResult, RecommendedAction, ActionPriority, ActionCategory } from "@/lib/tools/triage";
 import type { WeatherData } from "@/lib/data/open-meteo";
@@ -97,39 +98,20 @@ export function HotspotModal({ hotspot, analysis, weather, onClose }: HotspotMod
       <div className="relative w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
 
         {/* ── Satellite image banner ─────────────────────────────── */}
-        {analysis?.image_url ? (
-          <div className="relative h-44 overflow-hidden bg-slate-800 flex-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={analysis.image_url}
-              alt={`Satellite view at ${hotspot.lat.toFixed(3)}, ${hotspot.lon.toFixed(3)}`}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-            <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-2">
-              <div>
-                {analysis && <RiskBadge level={analysis.risk_level} size="lg" />}
-                <p className="text-xs font-mono text-slate-300 mt-1">
-                  {hotspot.lat.toFixed(4)}°N &nbsp;{Math.abs(hotspot.lon).toFixed(4)}°W
-                </p>
-              </div>
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="text-[10px] font-medium bg-slate-900/80 border border-slate-600 rounded-lg px-2 py-1 text-slate-300 hover:text-white hover:border-slate-400 transition-colors"
-              >
-                Open in Maps ↗
-              </a>
-            </div>
-          </div>
-        ) : (
-          /* No image — compact header bar */
-          <div className="flex-none bg-slate-800/60 border-b border-slate-700 px-5 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {analysis && <RiskBadge level={analysis.risk_level} size="sm" />}
-              <p className="text-xs font-mono text-slate-400">
+        {/* Always show satellite — use analysis image_url if available, otherwise build from coords */}
+        <div className="relative h-44 overflow-hidden bg-slate-800 flex-none">
+          <SatellitePreview
+            lat={hotspot.lat}
+            lon={hotspot.lon}
+            imageUrl={analysis?.image_url ?? null}
+            size="full"
+            className="w-full h-full"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+          <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-2">
+            <div>
+              {analysis && <RiskBadge level={analysis.risk_level} size="lg" />}
+              <p className="text-xs font-mono text-slate-300 mt-1">
                 {hotspot.lat.toFixed(4)}°N &nbsp;{Math.abs(hotspot.lon).toFixed(4)}°W
               </p>
             </div>
@@ -138,12 +120,12 @@ export function HotspotModal({ hotspot, analysis, weather, onClose }: HotspotMod
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-[10px] font-medium bg-slate-900 border border-slate-600 rounded-lg px-2 py-1 text-slate-300 hover:text-white hover:border-slate-400 transition-colors"
+              className="text-[10px] font-medium bg-slate-900/80 border border-slate-600 rounded-lg px-2 py-1 text-slate-300 hover:text-white hover:border-slate-400 transition-colors"
             >
               Open in Maps ↗
             </a>
           </div>
-        )}
+        </div>
 
         {/* ── Scrollable body ────────────────────────────────────── */}
         <div className="overflow-y-auto flex-1">

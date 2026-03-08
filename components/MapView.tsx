@@ -13,7 +13,7 @@ interface MapViewProps {
   selectedId?: string | null;
   hoveredId?: string | null;
   onSelect?: (hotspot: HotspotWithAnalysis) => void;
-  onHover?: (hotspot: HotspotWithAnalysis) => void;
+  onHover?: (hotspot: HotspotWithAnalysis, screenX: number, screenY: number) => void;
   onHoverEnd?: () => void;
   center?: [number, number]; // [lng, lat]
   zoom?: number;
@@ -135,7 +135,10 @@ export function MapView({
             marker.on("click", () => onSelect(hotspot));
           }
           if (onHover) {
-            marker.on("mouseover", () => onHover(hotspot));
+            marker.on("mouseover", (e: import("leaflet").LeafletMouseEvent) => {
+              const orig = e.originalEvent as MouseEvent;
+              onHover(hotspot, orig.clientX, orig.clientY);
+            });
           }
           if (onHoverEnd) {
             marker.on("mouseout", () => onHoverEnd());
