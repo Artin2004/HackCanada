@@ -1,4 +1,4 @@
-# Wildfire Triage Assistant
+# Pyroscope: Wildfire Triage Assistant
 
 Live satellite hotspot triage powered by [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/), [Open-Meteo](https://open-meteo.com/), and [Backboard.io](https://backboard.io) GPT-4o multimodal AI.
 

@@ -126,7 +126,7 @@ export default function TriageDashboard() {
       <header className="border-b border-slate-800 px-4 py-3 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <h1 className="font-semibold text-base text-slate-100">
-            Wildfire Triage
+            Pyroscope: Wildfire Triage
           </h1>
           {hotspots.length > 0 && (
             <span className="font-mono text-xs bg-slate-800 border border-slate-700 rounded-full px-2 py-0.5 text-slate-300">

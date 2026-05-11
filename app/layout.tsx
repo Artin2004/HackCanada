@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wildfire Ops | Training & Prediction",
+  title: "Pyroscope | Wildfire Ops",
   description: "Canadian wildfire training and prediction assistant",
 };
 
